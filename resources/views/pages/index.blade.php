@@ -5,7 +5,6 @@
         @if(!Auth::guest())
         <h1>Welcome to My Project~~</h1>
         @else
-        {{-- <h1>Hello Please Click That Button To Login</h1> --}}
             <div class="wrapper">
                 <div class="form-box login">
                     <h2>Login</h2>
@@ -41,16 +40,6 @@
             </div>
         @endif
     </div>
-    {{-- <style>
-        .centered {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-    </style> --}}
-
     <style>
 
         * {

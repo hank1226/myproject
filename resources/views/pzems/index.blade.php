@@ -5,13 +5,11 @@
     <h1>PZEMs</h1>
     @if(count($pzems) > 0)
         @foreach($pzems as $ps)
-{{-- iconic refer link : https://www.youtube.com/watch?v=7nJN12cHyv8 --}}
             <div class="row mb-3">
                 <div class="card">
                     <div class="card-body d-flex" >
                         <div>
                             <h3 class="card-title">PZEM_sn : {{ $ps->pzem_sn }}</h3>
-                            {{-- <p class="card-text">Written on {{ $ps->created_at }}</p> --}}
                             @php $found = false; @endphp
                             @if(count($devices) > 0)
                                 @foreach($devices as $device)
@@ -50,8 +48,6 @@
     @else
         <p>No pzems found</p>    
     @endif
-
-
 
     <style>
         .card {

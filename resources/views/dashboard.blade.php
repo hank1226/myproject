@@ -96,14 +96,11 @@
 
     .fa-pen-to-square {
         font-size: 27px; 
-        /* margin-top: 10px;  */
         margin-right: 10px;
-        /* margin-left: auto; */
     }
     
     .fa-trash-can {
         font-size: 27px; 
-        /* margin-top: 10px;  */
         color: red;
         margin-right: 10px;
     }

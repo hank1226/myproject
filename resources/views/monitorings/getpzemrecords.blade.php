@@ -78,11 +78,9 @@
             document.getElementById("Energy_container").style.display = "block";
             document.getElementById("pzem_PF_container").style.display = "block";
             document.getElementById("Frequency_container").style.display = "block";
-
-            // Adjust canvas height dynamically
             var chartCanvases = document.querySelectorAll('.chart-canvas');
             chartCanvases.forEach(function(canvas) {
-                canvas.height = 300; // Set the desired height here
+                canvas.height = 300; 
             });
         });
     });
@@ -96,9 +94,7 @@
         .button{
         display: flex;
         margin-top: 100px;
-        /* justify-content: center; */
         align-items: center;
-
     }
 
     .form-check {

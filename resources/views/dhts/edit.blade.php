@@ -20,7 +20,6 @@
             </select>
         </div>
         <button type="button" onclick="goback()" class="btn btn-primary">Go Back</button>
-        {{-- <input type="hidden" name="_method" value="PATCH"> --}}
         <button type="submit" class="btn btn-primary">Submit</button>
 
     </form>

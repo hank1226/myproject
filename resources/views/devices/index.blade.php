@@ -9,9 +9,6 @@
                 <h3 class="card-header"><a href="{{ url('devices/'.$device->id) }}">{{ $device->name }}</a></h3>
                 <div class="card-body">
                     <P class="card-text">Written on {{ $device->created_at }}</P>
-                    {{-- <div>
-                        <a href="{{ url('devices/'.$device->id) }}" class="btn btn-primary">View</a>
-                    </div> --}}
                 </div>
               </div>
         @endforeach  

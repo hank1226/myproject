@@ -98,7 +98,6 @@ class DevicesController extends Controller
             $dhtrecords = collect();
         }
         
-
         // get pzemrecords
         $pzems = PZEM::where('fk_id', '=', $device->id)
             ->select('id', 'pzem_sn')
@@ -115,10 +114,7 @@ class DevicesController extends Controller
             ->get();
         }else{
             $pzemrecords = collect();
-        }
-
-            // echo $pzemrecords;
-       
+        }     
 
         return view('devices.show',['device'=> $device, 'dhts' => $dhts, 'pzems' => $pzems, 'dhtrecords' => $dhtrecords, 'pzemrecords' => $pzemrecords]);
     }

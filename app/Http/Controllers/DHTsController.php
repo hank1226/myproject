@@ -34,8 +34,7 @@ class DHTsController extends Controller
             ->join('dht', 'dht.fk_id', '=', 'devices.id')
             ->select('devices.id', 'devices.name')
             ->get();
-        // echo $devices;
-        
+
         return view('dhts.index')->with(['dhts' => $dhts, 'dht' => $dht, 'devices' => $devices]);
     }
 

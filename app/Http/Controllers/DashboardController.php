@@ -29,13 +29,9 @@ class DashboardController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-
+        
         $fk_id = Auth::user()->id;
-
-        // 使用 Eloquent 關聯載入 User 的 devices
         $user = User::with('devices')->find($fk_id);
-
-        // 如果你的 User 模型有定義 devices 關聯，可以直接存取
         $devices = $user->devices;
 
         return view('dashboard')->with('devices', $devices);

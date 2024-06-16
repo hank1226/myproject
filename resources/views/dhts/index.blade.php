@@ -10,7 +10,6 @@
                 <div class="card-body d-flex">
                     <div>
                         <h3 class="card-title">DHT_sn: {{ $d->dht_sn }}</h3>
-                        {{-- <p class="card-text">Written on {{ $d->created_at }}</p> --}}
                         @php $found = false; @endphp
                         @if(count($devices) > 0)
                             @foreach($devices as $device)

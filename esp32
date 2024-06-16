@@ -1,0 +1,159 @@
+#include <PubSubClient.h>
+#include <PZEM004Tv30.h>
+#include <ArduinoJson.h>
+#include <WiFi.h>
+#include <DHT.h>
+
+const char *ssid = "JoMi";
+const char *password = "jonathan0808";
+const char *mqtt_server = "192.168.31.191";
+const char *mqtt_topic_pzem = "sensor/pzem";
+const char *mqtt_topic_dht = "sensor/dht";
+const char *mqtt_user = "mvpiot";
+const char *mqtt_password = "1688";
+int fk_id = 2;
+
+// PZEM
+#define PZEM_SERIAL Serial1
+PZEM004Tv30 pzem(PZEM_SERIAL, 33, 23, 0x01); // tx, rx
+
+// DHT
+// +:5v, 4, -:GND
+#define DHTPIN 4  
+#define DHTTYPE DHT11 
+DHT dht(DHTPIN, DHTTYPE);
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+void setupWiFi()
+{
+  Serial.print("Connecting to WiFi");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi connected");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void reconnect()
+{
+  while (!client.connected())
+  {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("ESP32Client", mqtt_user, mqtt_password))
+    {
+      Serial.println("connected");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  setupWiFi();
+  client.setServer(mqtt_server, 1883);
+  dht.begin();
+}
+
+void loop()
+{
+  float voltage = pzem.voltage();
+  float current = pzem.current();
+  float power = pzem.power();
+  float energy = pzem.energy();
+  float pf = pzem.pf();
+  float frequency = pzem.frequency();
+
+  Serial.println("=================================");
+  Serial.print("Voltage: ");
+  Serial.print(isnan(voltage) ? 0 : voltage);
+  Serial.println(" V");
+
+  Serial.print("Current: ");
+  Serial.print(isnan(current) ? 0 : current);
+  Serial.println(" A");
+
+  Serial.print("Power: ");
+  Serial.print(isnan(power) ? 0 : power);
+  Serial.println(" W");
+
+  Serial.print("Energy: ");
+  Serial.print(isnan(energy) ? 0 : energy);
+  Serial.println(" Wh");
+
+  Serial.print("Power Factor: ");
+  Serial.print(isnan(pf) ? 0 : pf);
+  Serial.println("");
+
+  Serial.print("Frequency: ");
+  Serial.print(isnan(frequency) ? 0 : frequency);
+  Serial.println(" Hz");
+
+  if (!client.connected())
+  {
+    reconnect();
+  }
+
+  // int fk_id = 2;
+  char payload_pzem[1024];
+  snprintf(payload_pzem, sizeof(payload_pzem), "{\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f,\"energy\":%.2f,\"pf\":%.2f,\"frequency\":%.2f,\"fk_id\":%d}", voltage, current, power, energy, pf, frequency, fk_id);
+
+  if (client.publish(mqtt_topic_pzem, payload_pzem))
+  {
+    Serial.println("Message published to PZEM MQTT topic");
+  }
+  else
+  {
+    Serial.println("Failed to publish message to PZEM MQTT topic");
+  }
+
+
+  float temperature = 0.0;
+  float humidity = 0.0;
+
+  humidity = dht.readHumidity();
+  temperature = dht.readTemperature();
+
+  if (isnan(humidity) || isnan(temperature))
+  {
+    Serial.println("Failed to read from DHT sensor!");
+    delay(1000);
+    return;
+  }
+
+  Serial.println("---------------------------------");
+  Serial.print("Humidity = ");
+  Serial.print(humidity);
+  Serial.println("% , ");
+  Serial.print("Temperature = ");
+  Serial.print(temperature);
+  Serial.println("C ");
+
+  // int fk_id_dht = 2;
+  char payload_dht[50];
+  snprintf(payload_dht, sizeof(payload_dht), "{\"fk_id\":%d,\"humidity\":%.2f,\"temperature\":%.2f}", fk_id, humidity, temperature);
+
+  if (client.publish(mqtt_topic_dht, payload_dht))
+  {
+    Serial.println("Message published to DHT MQTT topic");
+  }
+  else
+  {
+    Serial.println("Failed to publish message to DHT MQTT topic");
+  }
+
+  // Send data every 5 seconds
+  delay(5000);
+}
